@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package hospital;
+
+option java_multiple_files = true;
+option java_package = "org.hospital.user";
+
+enum ROLES {
+  ADMIN = 0;
+  DOCTOR = 1;
+  NURSE = 2;
+  PATIENT = 3;
+}
+
+message UserProto {
+  int64 id = 1;
+  string name = 2;
+  string email = 3;
+  string password = 4;
+  ROLES role = 5;
+}
+
+message UserByIdRequest {
+  int64 userId = 1;
+}
+
+message UserByNameRequest {
+  string name = 1;
+}
+
+service UserService {
+  rpc GetUserById(UserByIdRequest) returns (UserProto);
+  rpc GetUserByName(UserByNameRequest) returns (UserProto);
+}

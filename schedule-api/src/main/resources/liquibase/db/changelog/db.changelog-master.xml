@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+    <changeSet id="criacao-tabela-usuario" author="murillo.nacfur">
+        <sql>
+            CREATE TABLE hospital."USERS" (
+            "ID" BIGSERIAL NOT NULL,
+            "NAME" VARCHAR(255) NOT NULL,
+            "EMAIL" VARCHAR(255) UNIQUE NOT NULL,
+            "LOGIN" VARCHAR(255) UNIQUE NOT NULL,
+            "PASSWORD" VARCHAR(255) NOT NULL,
+            "BIRTH_DATE" DATE,
+            "CREATED_AT" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            "UPDATED_AT" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY ("ID")
+            );
+        </sql>
+        <rollback>
+            DROP TABLE hospital."USERS";
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'criacao-tabela-usuario';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="criacao-tabela-user-roles" author="murillo.nacfur">
+        <sql>
+            CREATE TABLE hospital."USER_ROLE" (
+            "ID" BIGSERIAL PRIMARY KEY,
+            "USER_ID" BIGINT NOT NULL,
+            "ROLE" VARCHAR(255) NOT NULL CHECK ("ROLE" IN ('ADMIN', 'DOCTOR', 'NURSE', 'PATIENT')),
+            FOREIGN KEY ("USER_ID") REFERENCES hospital."USERS"("ID")
+            );
+        </sql>
+        <rollback>
+            DROP TABLE hospital."USER_ROLES";
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'criacao-tabela-user-roles';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="criacao-tabela-appointments" author="murillo.nacfur">
+        <sql>
+            CREATE TABLE hospital."APPOINTMENTS" (
+            "ID" BIGSERIAL PRIMARY KEY,
+            "DOCTOR_ID" BIGINT NOT NULL REFERENCES hospital."USERS"("ID"),
+            "PATIENT_ID" BIGINT NOT NULL REFERENCES hospital."USERS"("ID"),
+            "DATE_HOUR_SCHEDULED" TIMESTAMP NOT NULL,
+            "DATE_HOUR_START" TIMESTAMP,
+            "DATE_HOUR_END" TIMESTAMP,
+            "STATUS" VARCHAR(50) NOT NULL CHECK ("STATUS" IN ('SCHEDULED', 'COMPLETED', 'CANCELED')),
+            "INFORMATION" VARCHAR(255),
+            "DESCRIPTION" TEXT,
+            "CREATED_BY" BIGINT NOT NULL REFERENCES hospital."USERS"("ID"),
+            "UPDATED_BY" BIGINT NOT NULL REFERENCES hospital."USERS"("ID"),
+            "CREATED_AT" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            "UPDATED_AT" TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+        </sql>
+        <rollback>
+            DROP TABLE hospital."APPOINTMENTS";
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'criacao-tabela-appointments';
+        </rollback>
+    </changeSet>
+
+
+    <changeSet id="insercao-usuarios-iniciais" author="murillo.nacfur">
+        <sql>
+            -- Inserindo um usuário para cada role
+            -- A senha 'password123' é um placeholder. Em um ambiente real, ela deve ser devidamente "hasheada".
+            INSERT INTO hospital."USERS" ("NAME", "EMAIL", "LOGIN", "PASSWORD", "BIRTH_DATE") VALUES
+            ('Admin User', 'admin@example.com', 'admin.user', 'password123', '1980-01-01'),
+            ('Doctor User', 'doctor@example.com', 'doctor.user', 'password123', '1985-05-10'),
+            ('Nurse User', 'nurse@example.com', 'nurse.user', 'password123', '1990-03-15'),
+            ('Patient User', 'patient@example.com', 'patient.user', 'password123', '1995-11-30');
+        </sql>
+        <rollback>
+            -- O rollback precisa primeiro remover as roles para depois remover os usuários devido à chave estrangeira
+            DELETE FROM hospital."USER_ROLE" WHERE "USER_ID" IN (
+            SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" IN (
+            'admin.user', 'doctor.user', 'nurse.user', 'patient.user')
+            );
+            DELETE FROM hospital."USERS" WHERE "LOGIN" IN (
+            'admin.user', 'doctor.user', 'nurse.user', 'patient.user');
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'insercao-usuarios-iniciais';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="insercao-roles-iniciais" author="murillo.nacfur">
+        <sql>
+            -- Atribuindo as roles aos usuários recém-criados
+            INSERT INTO hospital."USER_ROLE" ("USER_ID", "ROLE") VALUES
+            ((SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" = 'admin.user'), 'ADMIN'),
+            ((SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" = 'doctor.user'), 'DOCTOR'),
+            ((SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" = 'nurse.user'), 'NURSE'),
+            ((SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" = 'patient.user'), 'PATIENT');
+        </sql>
+        <rollback>
+            DELETE FROM hospital."USER_ROLE" WHERE "USER_ID" IN (
+            SELECT "ID" FROM hospital."USERS" WHERE "LOGIN" IN (
+            'admin.user', 'doctor.user', 'nurse.user', 'patient.user')
+            );
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'insercao-roles-iniciais';
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

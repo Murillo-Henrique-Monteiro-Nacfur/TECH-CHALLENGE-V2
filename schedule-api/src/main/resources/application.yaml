@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: gateway-api
+  graphql:
+    graphiql:
+      enabled: true
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/fase3}
+    username: ${DATASOURCE_USERNAME:application}
+    password: ${DATASOURCE_PASSWORD:7KTu)$U9W1%7}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        default_schema: hospital
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  liquibase:
+    change-log: classpath:liquibase/db/changelog/db.changelog-master.xml
+    enabled: true
+    default-schema: hospital
+
+grpc:
+  server:
+    port: 6566
+    security: # Re-abilitando a segurança para o servidor gRPC
+      enabled: false
