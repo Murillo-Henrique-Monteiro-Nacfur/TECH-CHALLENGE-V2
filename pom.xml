@@ -25,6 +25,7 @@
         <module>schedule-api</module>
         <module>authentication-api</module>
         <module>gateway</module>
+        <module>notification-api</module>
     </modules>
 
     <dependencyManagement>
