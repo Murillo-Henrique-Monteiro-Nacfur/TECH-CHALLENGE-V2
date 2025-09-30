@@ -14,7 +14,5 @@ public class KafkaConsumerService {
     public void consumeNotification(NotificationRequest request) {
         log.info("<<<<<< ✅ Consumed message from Kafka >>>>>>");
         log.info("Received Notification: {}", request);
-        // A lógica de envio de e-mail e SMS foi removida conforme solicitado.
-        // A mensagem agora foi consumida com sucesso do Kafka.
     }
 }

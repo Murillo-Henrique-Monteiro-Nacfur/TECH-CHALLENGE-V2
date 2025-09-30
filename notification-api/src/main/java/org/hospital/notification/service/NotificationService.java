@@ -21,7 +21,6 @@ public class NotificationService {
 
         log.info("Processing notification: {} for recipient: {}", notificationId, request.getRecipient());
 
-        // Envia a notificação para o Kafka e retorna uma resposta imediata.
         kafkaProducerService.sendNotification(request);
 
         return Mono.just(NotificationResponse.success(notificationId, "Notification request received and is being processed."));
