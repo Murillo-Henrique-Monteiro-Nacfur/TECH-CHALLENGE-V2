@@ -12,7 +12,7 @@ public class KafkaConsumerService {
 
     @KafkaListener(topics = "${kafka.topic.name}", groupId = "${kafka.group.id}")
     public void consumeNotification(NotificationRequest request) {
-        log.info("<<<<<< ✅ Consumed message from Kafka >>>>>>");
+        log.info("Consumed message from Kafka");
         log.info("Received Notification: {}", request);
     }
 }
