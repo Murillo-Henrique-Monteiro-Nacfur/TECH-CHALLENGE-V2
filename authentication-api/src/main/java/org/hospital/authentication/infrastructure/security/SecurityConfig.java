@@ -27,9 +27,7 @@ public class SecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity, not recommended for production
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/login**").permitAll() // Allow public access to login endpoints)
-                .requestMatchers("/actuator/**").permitAll() // Allow public access to actuator endpoints
-                .requestMatchers("/swagger-ui/**").permitAll() // Allow public access to Swagger UI
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer( conf -> conf.jwt(Customizer.withDefaults())); // Require authentication for all other requests

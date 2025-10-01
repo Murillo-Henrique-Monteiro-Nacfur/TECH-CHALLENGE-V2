@@ -1,10 +1,13 @@
 package org.hospital.core.infrastructure;
 
+import io.grpc.Context;
+import org.hospital.core.domain.dto.UserAuthenticatedDTO;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class ThreadLocalStorage {
-    private static ThreadLocal<UserDetails> userTokenThreadLocal = new ThreadLocal<>();
     private static ThreadLocal<String> tokenThreadLocal = new ThreadLocal<>();
+    public static final Context.Key<UserAuthenticatedDTO> USER_AUTHENTICATION_DTO_CONTEXT_KEY = Context.key("threadLocalUserAuthenticatedDTO");
+
 
     private ThreadLocalStorage() {
     }
@@ -16,20 +19,18 @@ public class ThreadLocalStorage {
         return "";
     }
 
-    public static UserDetails getUserDetails() {
-        if (userTokenThreadLocal.get() != null) {
-            return userTokenThreadLocal.get();
+    public static UserAuthenticatedDTO getUserAuthenticatedDTO() {
+        if (USER_AUTHENTICATION_DTO_CONTEXT_KEY.get() != null) {
+            return USER_AUTHENTICATION_DTO_CONTEXT_KEY.get();
         }
         return null;
     }
 
-    public static void build(UserDetails userDetails, String token) {
-        ThreadLocalStorage.userTokenThreadLocal.set(userDetails);
+    public static void setTokenThreadLocal(String token) {
         ThreadLocalStorage.tokenThreadLocal.set(token);
     }
 
     public static void clear() {
-        ThreadLocalStorage.userTokenThreadLocal.remove();
         ThreadLocalStorage.tokenThreadLocal.remove();
     }
 }

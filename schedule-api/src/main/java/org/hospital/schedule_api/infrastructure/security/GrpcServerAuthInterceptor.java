@@ -3,11 +3,11 @@ package org.hospital.schedule_api.infrastructure.security;
 import io.grpc.*;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
+import org.hospital.core.domain.dto.UserAuthenticatedDTO;
 import org.hospital.core.domain.service.JwtDecoreServiceCore;
 import org.hospital.core.infrastructure.ThreadLocalStorage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,9 +22,6 @@ public class GrpcServerAuthInterceptor implements ServerInterceptor {
 
     public static final Metadata.Key<String> AUTH_HEADER_KEY =
             Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
-
-    // Context.Key para armazenar informações do usuário após a validação
-    public static final Context.Key<UserDetails> USER_DETAILS_CONTEXT_KEY = Context.key("userDetails");
 
     @Override
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
@@ -46,10 +43,9 @@ public class GrpcServerAuthInterceptor implements ServerInterceptor {
         String token = authHeader.substring(7);
 
         try {
-            UserDetails userDetails = jwtDecoreServiceCore.validateToken(token);
-            ThreadLocalStorage.build(userDetails, token);
+            UserAuthenticatedDTO userDetails = jwtDecoreServiceCore.validateToken(token);
 
-            Context context = Context.current().withValue(USER_DETAILS_CONTEXT_KEY, userDetails);
+            Context context = Context.current().withValue(ThreadLocalStorage.USER_AUTHENTICATION_DTO_CONTEXT_KEY, userDetails);
 
             return Contexts.interceptCall(context, call, headers, next);
 

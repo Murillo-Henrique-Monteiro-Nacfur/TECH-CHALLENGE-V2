@@ -25,7 +25,7 @@ public class JwtAuthContextFilter extends OncePerRequestFilter {
             if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
                 // Armazena apenas o token, sem o prefixo "Bearer "
                 String jwt = bearerToken.substring(7);
-                ThreadLocalStorage.build(jwtDecoreServiceCore.validateToken(jwt) , jwt);
+                ThreadLocalStorage.setTokenThreadLocal(jwt);
             }
             filterChain.doFilter(request, response);
         } finally {

@@ -3,6 +3,7 @@ syntax = "proto3";
 package hospital;
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 option java_multiple_files = true;
 option java_package = "org.hospital.appointment";
@@ -29,20 +30,49 @@ message AppointmentCreateRequest {
   int64 doctorUserId = 2;
   int64 patientUserId = 3;
   google.protobuf.Timestamp dateHourScheduled = 4;
-  google.protobuf.Timestamp dateHourStart = 5;
-  google.protobuf.Timestamp dateHourEnd = 6;
+  optional google.protobuf.Timestamp dateHourStart = 5;
+  optional google.protobuf.Timestamp dateHourEnd = 6;
   StatusAppointment statusAppointment = 7;
-  string description = 8;
+  optional string description = 8;
   string information = 9;
 }
+message AppointmentUpdateRequest {
+  int64 id = 1;
+  optional google.protobuf.Timestamp dateHourScheduled = 2;
+  optional google.protobuf.Timestamp dateHourStart = 3;
+  optional google.protobuf.Timestamp dateHourEnd = 4;
+  optional StatusAppointment statusAppointment = 5;
+  optional string description = 6;
+  optional string information = 7;
+}
+message AppointmentFilterRequest {
+  optional int64 id = 1;
+  optional google.protobuf.UInt64Value doctorUserId = 2;
+  optional google.protobuf.UInt64Value patientUserId = 3;
+  repeated StatusAppointment statusAppointment = 4;
+  optional bool upcoming = 5;
+}
 
-message AppointmentCreateResponse {
+message AppointmentPagedResponse {
+  int32 page = 1;
+  int32 totalPages = 2;
+  int64 totalElements = 3;
+  repeated AppointmentProto appointments = 4;
+}
+
+message AppointmentCreateUpdateResponse {
   int64 id = 1;
   string message = 2;
   bool success = 3;
 }
-
+message AppointmentPagedRequestFiltered {
+  int32 page = 1;
+  int32 size = 2;
+  AppointmentFilterRequest appointmentFilterRequest = 3;
+}
 service AppointmentService {
-  rpc createAppointment(AppointmentCreateRequest) returns (AppointmentCreateResponse);
-  rpc updateAppointment(AppointmentCreateRequest) returns (AppointmentCreateResponse);
+  rpc createAppointment(AppointmentCreateRequest) returns (AppointmentCreateUpdateResponse);
+  //rpc getAppointmentById(int64) returns (AppointmentProto);
+  rpc getAppointmentsByFilter(AppointmentPagedRequestFiltered) returns (AppointmentPagedResponse);
+  rpc updateAppointment(AppointmentUpdateRequest) returns (AppointmentCreateUpdateResponse);
 }

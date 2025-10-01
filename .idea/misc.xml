@@ -7,6 +7,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/gateway/pom.xml" />
         <option value="$PROJECT_DIR$/schedular-api/pom.xml" />
+        <option value="$PROJECT_DIR$/historical/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

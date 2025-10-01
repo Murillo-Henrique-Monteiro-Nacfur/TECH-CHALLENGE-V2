@@ -5,10 +5,10 @@ import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.hospital.authentication.api.presenter.UserPresenters;
 import org.hospital.authentication.api.service.handler.UserServiceHandler;
-import org.hospital.user.UserByIdRequest;
-import org.hospital.user.UserProto;
-import org.hospital.user.UserServiceGrpc;
+import org.hospital.authentication.api.usecase.user.UserCreateUsecase;
+import org.hospital.user.*;
 
 import java.util.NoSuchElementException;
 
@@ -18,6 +18,8 @@ import java.util.NoSuchElementException;
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     private final UserServiceHandler userServiceHandler;
+    private final UserCreateUsecase userCreateUsecase;
+    private final UserPresenters userPresenters;
 
     @Override
     public void getUserById(UserByIdRequest request, StreamObserver<UserProto> responseObserver) {
@@ -40,4 +42,16 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
         }
     }
 
+    @Override
+    public void createUser(UserCreateRequest request, StreamObserver<UserCreatedResponse> responseObserver) {
+        try {
+            var user = userCreateUsecase.execute(userPresenters.toDomain(request));
+            var response = UserCreatedResponse.newBuilder().setId(user.getId()).setMessage("Sucessfully created user").setSuccess(true).build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (NoSuchElementException e) {
+            log.warn("Can't create User ID: {}", request.getName());
+            responseObserver.onError(Status.INTERNAL.withDescription("Internal server error").asRuntimeException());
+        }
+    }
 }

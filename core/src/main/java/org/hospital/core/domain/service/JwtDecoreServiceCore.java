@@ -2,6 +2,8 @@ package org.hospital.core.domain.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hospital.core.domain.dto.UserAuthenticatedDTO;
+import org.hospital.core.infrastructure.database.entitydb.UserRoles;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +24,7 @@ public class JwtDecoreServiceCore {
 
     private final JwtDecoder jwtDecoder;
 
-    public UserDetails validateToken(String token) {
+    public UserAuthenticatedDTO validateToken(String token) {
         if (token == null) {
             return null;
         }
@@ -40,15 +42,16 @@ public class JwtDecoreServiceCore {
         }
     }
 
-    private UserDetails buildUserDetailsFromJwt(Jwt jwt) {
+    private UserAuthenticatedDTO buildUserDetailsFromJwt(Jwt jwt) {
         String username = jwt.getSubject();
         String scopeClaim = jwt.getClaimAsString("scopes");
+        String idString = jwt.getClaimAsString("userId");
 
-        List<SimpleGrantedAuthority> authorities = scopeClaim != null ?
-                Arrays.stream(scopeClaim.split(" "))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList()) : Collections.emptyList();
+        Long userId = Long.parseLong(idString);
 
-        return new User(username, "", authorities);
+        List<UserRoles> authorities = scopeClaim != null ?
+                Arrays.stream(scopeClaim.split(" ")).map(e -> UserRoles.valueOf(e.replace("ROLE_",""))).toList() : Collections.emptyList();
+
+        return new UserAuthenticatedDTO(userId  , username, "", authorities);
     }
 }

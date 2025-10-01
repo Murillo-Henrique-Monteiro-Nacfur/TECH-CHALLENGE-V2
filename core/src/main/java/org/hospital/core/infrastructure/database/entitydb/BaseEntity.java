@@ -5,8 +5,11 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.Getter;
+import org.hospital.core.infrastructure.ThreadLocalStorage;
 
 import java.time.LocalDateTime;
+
+import static java.util.Objects.isNull;
 
 @MappedSuperclass
 @Getter
@@ -25,13 +28,14 @@ public abstract class BaseEntity {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = this.createdAt;
-        this.createdBy = 1L;//todo
-        this.updatedAtBy = 1L;//todo
+        var userId = ThreadLocalStorage.getUserAuthenticatedDTO().getId();
+        this.createdBy = userId;
+        this.updatedAtBy = userId;
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-        this.updatedAtBy = 1L;//todo
+        this.updatedAtBy = isNull(ThreadLocalStorage.getUserAuthenticatedDTO()) ? this.createdBy : ThreadLocalStorage.getUserAuthenticatedDTO().getId();
     }
 }

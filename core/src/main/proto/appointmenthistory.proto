@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package hospital;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option java_multiple_files = true;
+option java_package = "org.hospital.appointmenthistory";
+
+
+message AppointmentHistoryProto {
+  int64 id = 1;
+  int64 idAppointment = 2;
+  string doctorName = 3;
+  string patientName = 4;
+  google.protobuf.Timestamp dateHourStart = 5;
+  google.protobuf.Timestamp dateHourEnd = 6;
+  string statusAppointment = 7;
+  string description = 8;
+  string information = 9;
+}
+
+message AppointmentHistoryPagedResponse {
+  int32 page = 1;
+  int32 totalPages = 2;
+  int64 totalElements = 3;
+  repeated AppointmentHistoryProto appointments = 4;
+}
+
+message AppointmentHistoryPagedRequest {
+  int32 page = 1;
+  int32 size = 2;
+}
+service AppointmentHistoryService {
+  rpc getAppointmentsHistoryByFilter(AppointmentHistoryPagedRequest) returns (AppointmentHistoryPagedResponse);
+}

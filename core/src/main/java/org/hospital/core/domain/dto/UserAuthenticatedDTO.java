@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hospital.core.infrastructure.database.entitydb.UserRoles;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -17,7 +18,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public class UserAuthenticatedDTO extends Throwable implements UserDetails {
 
-    public UserAuthenticatedDTO(Long id, String username, String password, List<String> authorities) {
+    public UserAuthenticatedDTO(Long id, String username, String password, List<UserRoles> userRoles) {
         super();
         this.id = id;
         this.password = password;
@@ -26,7 +27,8 @@ public class UserAuthenticatedDTO extends Throwable implements UserDetails {
         this.isAccountNonLocked = true;
         this.isCredentialsNonExpired = true;
         this.isEnabled = true;
-        this.authorities = authorities;
+        this.authorities = userRoles.stream().map(UserRoles::name).toList();
+        this.roles = userRoles;
     }
 
     private Long id;
@@ -36,14 +38,14 @@ public class UserAuthenticatedDTO extends Throwable implements UserDetails {
     private boolean isAccountNonLocked;
     private boolean isCredentialsNonExpired;
     private boolean isEnabled;
+    private List<UserRoles> roles;
 
     private List<String> authorities;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Stream.of("ADMIN", "DOCTOR", "NURSE")
+        return authorities.stream()
                 .map(role -> (GrantedAuthority) () -> "ROLE_" + role)
                 .toList();
-        //authorities.stream().map(role -> (GrantedAuthority) () -> "ROLE_" + role).toList();
 
     }
 

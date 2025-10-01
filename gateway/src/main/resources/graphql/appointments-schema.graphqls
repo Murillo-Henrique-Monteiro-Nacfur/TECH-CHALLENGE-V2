@@ -1,0 +1,78 @@
+scalar LocalDateTime
+
+#appointments types
+enum AppointmentStatus {
+    SCHEDULED
+    COMPLETED
+    CANCELED
+}
+
+type Appointment {
+    id: ID!
+    patient: User!
+    doctor: User!
+    date: String!
+    time: String!
+    status: AppointmentStatus!
+}
+
+type AppointmentResponseDTO {
+    id: ID
+    doctorUserId: ID
+    patientUserId: ID
+    dateHourScheduled: LocalDateTime
+    dateHourStart: LocalDateTime
+    dateHourEnd: LocalDateTime
+    status: AppointmentStatus
+    information: String
+    description: String
+}
+type AppointmentPagedResponseDTO {
+    page: Int
+    size: Int
+    totalElements: Int
+    totalPages: Int
+    appointments: [AppointmentResponseDTO]
+}
+
+type AppointmentCreateUpdateResponse {
+    appointmentId: ID!
+    success: Boolean!
+    message: String
+}
+input AppointmentCreateRequestInput {
+    doctorUserId: ID!
+    patientUserId: ID!
+    dateHourScheduled: LocalDateTime!
+    dateHourStart: LocalDateTime
+    dateHourEnd: LocalDateTime
+    information: String!
+}
+input AppointmentUpdateRequestInput {
+    id: ID!
+    dateHourScheduled: LocalDateTime
+    dateHourStart: LocalDateTime
+    dateHourEnd: LocalDateTime
+    status: AppointmentStatus
+    information: String
+    description: String
+}
+input AppointmentFindAllFilterRequestInput {
+    doctorId: ID
+    patientId: ID
+    statusAppointments: [AppointmentStatus]
+    upcoming: Boolean
+}
+#appointments types
+
+extend type Query {
+    getAppointments: [Appointment!]!
+    getAppointment(id: ID!): Appointment
+    findAllAppointments(input: AppointmentFindAllFilterRequestInput, pageable: Pageable): AppointmentPagedResponseDTO!
+}
+
+extend type Mutation {
+    createAppointment(input: AppointmentCreateRequestInput!): AppointmentCreateUpdateResponse
+    updateAppointment(input: AppointmentUpdateRequestInput!): AppointmentCreateUpdateResponse
+    cancelAppointment(appointmentId: ID!): Appointment!
+}

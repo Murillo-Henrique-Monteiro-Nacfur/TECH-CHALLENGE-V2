@@ -4,6 +4,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!--Alterar todos os localdatetime para with timezone no postgresql-->
     <changeSet id="criacao-tabela-usuario" author="murillo.nacfur">
         <sql>
             CREATE TABLE hospital."USERS" (
@@ -100,6 +102,38 @@
             'admin.user', 'doctor.user', 'nurse.user', 'patient.user')
             );
             DELETE FROM DATABASECHANGELOG WHERE ID = 'insercao-roles-iniciais';
+        </rollback>
+    </changeSet>
+
+    <changeSet id="criacao-tabela-appointments-history" author="murillo.nacfur">
+        <sql>
+            CREATE TABLE hospital."APPOINTMENTS_HISTORY" (
+                "ID" BIGSERIAL PRIMARY KEY,
+                "APPOINTMENT_ID" BIGINT NOT NULL,
+                "ACTION" VARCHAR(10) NOT NULL,
+                "CHANGE_TIMESTAMP" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                "DOCTOR_USER_ID" BIGINT,
+                "PATIENT_USER_ID" BIGINT,
+                "DATE_HOUR_SCHEDULED" TIMESTAMP,
+                "DATE_HOUR_START" TIMESTAMP NULL,
+                "DATE_HOUR_END" TIMESTAMP NULL,
+                "STATUS_APPOINTMENT" VARCHAR(20),
+                "DESCRIPTION" TEXT NULL,
+                "INFORMATION" TEXT NULL
+            );
+
+            COMMENT ON TABLE hospital."APPOINTMENTS_HISTORY" IS 'Tabela de auditoria para registrar o histórico de alterações na tabela APPOINTMENTS.';
+            COMMENT ON COLUMN hospital."APPOINTMENTS_HISTORY"."ID" IS 'ID único (BIGSERIAL) para cada registro de histórico.';
+            COMMENT ON COLUMN hospital."APPOINTMENTS_HISTORY"."APPOINTMENT_ID" IS 'Referência ao ID do agendamento na tabela principal APPOINTMENTS.';
+            COMMENT ON COLUMN hospital."APPOINTMENTS_HISTORY"."ACTION" IS 'Ação realizada no registro original (INSERT, UPDATE, DELETE).';
+            COMMENT ON COLUMN hospital."APPOINTMENTS_HISTORY"."CHANGE_TIMESTAMP" IS 'Timestamp de quando a alteração foi registrada.';
+            COMMENT ON COLUMN hospital."APPOINTMENTS_HISTORY"."STATUS_APPOINTMENT" IS 'Estado do agendamento no momento da alteração.';
+
+            CREATE INDEX "idx_appointments_history_appointment_id" ON hospital."APPOINTMENTS_HISTORY"("APPOINTMENT_ID");
+        </sql>
+        <rollback>
+            DROP TABLE hospital."APPOINTMENTS_HISTORY";
+            DELETE FROM DATABASECHANGELOG WHERE ID = 'criacao-tabela-appointments-history';
         </rollback>
     </changeSet>
 

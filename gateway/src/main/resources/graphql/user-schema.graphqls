@@ -1,0 +1,46 @@
+
+enum UserType {
+    ADMIN
+    DOCTOR
+    NURSE
+    PATIENT
+}
+enum Role {
+    DOCTOR
+    NURSE
+    PATIENT
+}
+#appointments types
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    userType: UserType!
+}
+type UserRoles {
+    roles: [Role!]!
+    userId: ID!
+}
+type CreateUserResponse {
+    userId: ID!
+    success: Boolean!
+    message: String
+}
+input Pageable {
+    page: Int
+    size: Int
+}
+
+extend type Query {
+    getUserById(userId: ID!): User
+    getUsers: [User!]!
+    getUserRoles(userId: ID!): UserRoles
+}
+type LoginResponse {
+    token: String!
+}
+extend type Mutation {
+    login(username: String!, password: String!): LoginResponse!
+    createUser(username: String!, email: String!, userType: UserType!): CreateUserResponse!
+}
