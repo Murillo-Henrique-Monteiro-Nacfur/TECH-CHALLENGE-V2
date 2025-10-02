@@ -25,7 +25,7 @@ message AppointmentHistoryPagedResponse {
   int32 page = 1;
   int32 totalPages = 2;
   int64 totalElements = 3;
-  repeated AppointmentHistoryProto appointments = 4;
+  repeated AppointmentHistoryProto appointmentHistory = 4;
 }
 
 message AppointmentHistoryPagedRequest {

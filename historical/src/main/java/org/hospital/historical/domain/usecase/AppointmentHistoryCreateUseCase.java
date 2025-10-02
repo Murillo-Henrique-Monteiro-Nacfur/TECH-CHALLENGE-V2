@@ -22,8 +22,8 @@ public class AppointmentHistoryCreateUseCase {
         if (StatusAppointments.COMPLETED.equals(appointment.getStatusAppointment())) {
             var appointmentsHistory = AppointmentsHistoryEntity.builder()
                     .appointmentId(appointment.getId())
-                    .patientName(appointment.getPatient().getName())
-                    .doctorName(appointment.getDoctor().getName())
+                    .patient(appointment.getPatient())
+                    .doctor(appointment.getDoctor())
                     .dateHourStart(appointment.getDateHourStart())
                     .dateHourEnd(appointment.getDateHourEnd())
                     .statusAppointment(appointment.getStatusAppointment())

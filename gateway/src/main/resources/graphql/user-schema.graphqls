@@ -1,11 +1,6 @@
 
-enum UserType {
-    ADMIN
-    DOCTOR
-    NURSE
-    PATIENT
-}
 enum Role {
+    ADMIN
     DOCTOR
     NURSE
     PATIENT
@@ -16,7 +11,7 @@ type User {
     id: ID!
     name: String!
     email: String!
-    userType: UserType!
+    userType: Role!
 }
 type UserRoles {
     roles: [Role!]!
@@ -32,15 +27,10 @@ input Pageable {
     size: Int
 }
 
-extend type Query {
-    getUserById(userId: ID!): User
-    getUsers: [User!]!
-    getUserRoles(userId: ID!): UserRoles
-}
 type LoginResponse {
     token: String!
 }
 extend type Mutation {
     login(username: String!, password: String!): LoginResponse!
-    createUser(username: String!, email: String!, userType: UserType!): CreateUserResponse!
+    createUser(username: String!, email: String!, userType: Role!): CreateUserResponse!
 }

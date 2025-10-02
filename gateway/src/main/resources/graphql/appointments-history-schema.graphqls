@@ -1,0 +1,23 @@
+type AppointmentHistoryResponseDTO {
+    id: ID
+    doctorName: String
+    patientName: String
+    dateHourStart: LocalDateTime
+    dateHourEnd: LocalDateTime
+    statusAppointment: String
+    information: String
+    description: String
+}
+type AppointmentHistoryPagedResponseDTO {
+    page: Int
+    size: Int
+    totalElements: Int
+    totalPages: Int
+    appointments: [AppointmentHistoryResponseDTO]
+}
+
+#appointments history types
+
+extend type Query {
+    findAllAppointmentsHistory(pageable: Pageable): AppointmentHistoryPagedResponseDTO!
+}

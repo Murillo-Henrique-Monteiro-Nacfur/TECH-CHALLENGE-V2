@@ -26,6 +26,7 @@
         <module>authentication-api</module>
         <module>gateway</module>
         <module>notification-api</module>
+        <module>historical</module>
     </modules>
 
     <dependencyManagement>

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "APPOINTMENTS_HISTORY", schema = "hospital")
-public class AppointmentsHistoryEntity extends BaseEntity {
+public class AppointmentsHistoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "sequenceGenerator")
@@ -22,11 +22,13 @@ public class AppointmentsHistoryEntity extends BaseEntity {
     @Column(name = "APPOINTMENT_ID")
     private Long appointmentId;
 
-    @Column(name = "DOCTOR_NAME")
-    private String doctorName;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "DOCTOR_ID", nullable = false)
+    private UserEntity doctor;
 
-    @Column(name = "PATIENT_NAME")
-    private String patientName;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PATIENT_ID", nullable = false)
+    private UserEntity patient;
 
     @Column(name = "DATE_HOUR_START")
     private LocalDateTime dateHourStart;
@@ -35,7 +37,7 @@ public class AppointmentsHistoryEntity extends BaseEntity {
     private LocalDateTime dateHourEnd;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "STATUS")
+    @Column(name = "STATUS_APPOINTMENT")
     private StatusAppointments statusAppointment;
 
     @Column(name = "DESCRIPTION")

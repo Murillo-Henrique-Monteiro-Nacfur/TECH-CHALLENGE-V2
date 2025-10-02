@@ -1,8 +1,8 @@
 server:
-  port: 8089
+  port: 8087
 spring:
   application:
-    name: gateway-api
+    name: historical-api
   graphql:
     graphiql:
       enabled: true
@@ -21,17 +21,14 @@ spring:
     hibernate:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  liquibase:
+    change-log: classpath:liquibase/db/changelog/db.changelog-master.xml
+    enabled: true
+    default-schema: hospital
+
 grpc:
-  client:
-    login-service:
-      address: 'static://localhost:6565'
-      negotiation-type: PLAINTEXT
-    user-service:
-      address: 'static://localhost:6565'
-      negotiation-type: PLAINTEXT
-    schedule-service:
-      address: 'static://localhost:6566'
-      negotiation-type: PLAINTEXT
-    history-service:
-      address: 'static://localhost:6567'
-      negotiation-type: PLAINTEXT
+  server:
+    port: 6567
+    security: # Re-abilitando a segurança para o servidor gRPC
+      enabled: false

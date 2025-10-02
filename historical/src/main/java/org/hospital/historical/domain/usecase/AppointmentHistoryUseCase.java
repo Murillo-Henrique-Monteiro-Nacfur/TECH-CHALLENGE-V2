@@ -15,8 +15,8 @@ public class AppointmentHistoryUseCase {
     public final AppointmentHistoryPresenter appointmentHistoryPresenter;
 
     public Page<AppointmentsHistory> execute(Pageable pageable) {
-        var a = appointmentsHistoryRepository.findAll(pageable);
-        return appointmentHistoryPresenter.toDomain(a);
+        var appointmentsHistoryEntities = appointmentsHistoryRepository.findAll(pageable);
+        return appointmentHistoryPresenter.toDomain(appointmentsHistoryEntities);
     }
 
 }

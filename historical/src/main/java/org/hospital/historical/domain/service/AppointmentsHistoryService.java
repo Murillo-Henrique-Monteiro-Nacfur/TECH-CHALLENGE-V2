@@ -13,9 +13,9 @@ import org.hospital.historical.domain.usecase.AppointmentHistoryUseCase;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+@Slf4j
 @GrpcService
 @RequiredArgsConstructor
-@Slf4j
 public class AppointmentsHistoryService extends AppointmentHistoryServiceGrpc.AppointmentHistoryServiceImplBase {
 
     private final AppointmentHistoryUseCase appointmentHistoryUseCase;
@@ -30,7 +30,7 @@ public class AppointmentsHistoryService extends AppointmentHistoryServiceGrpc.Ap
                     .setPage(appointmentsHistories.getPageable().getPageNumber())
                     .setTotalPages(appointmentsHistories.getTotalPages())
                     .setTotalElements(appointmentsHistories.getTotalElements())
-                    .addAllAppointments(appointmentsHistories.map(appointmentHistoryPresenter::toAppointmentHistoryProto).toList());
+                    .addAllAppointmentHistory(appointmentsHistories.map(appointmentHistoryPresenter::toAppointmentHistoryProto).toList());
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
         } catch (Exception e) {
