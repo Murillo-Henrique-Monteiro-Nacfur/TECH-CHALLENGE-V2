@@ -1,0 +1,28 @@
+FROM maven:3.9-eclipse-temurin-21 AS build
+
+WORKDIR /app
+
+COPY pom.xml .
+COPY core/pom.xml ./core/
+COPY gateway/pom.xml ./gateway/
+COPY schedule-api/pom.xml ./schedule-api/
+COPY authentication-api/pom.xml ./authentication-api/
+COPY notification-api/pom.xml ./notification-api/
+COPY historical/pom.xml ./historical/
+
+RUN mvn dependency:go-offline
+
+COPY . .
+
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+
+COPY --from=build /app/schedule-api/target/schedule-api-1.0-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+EXPOSE 6566
+
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dlog4j2.formatMsgNoLookups=true", "-XX:MinRAMPercentage=60", "-XX:MaxRAMPercentage=90", "-server", "-XX:+OptimizeStringConcat", "-XX:+UseStringDeduplication", "-jar", "app.jar"]

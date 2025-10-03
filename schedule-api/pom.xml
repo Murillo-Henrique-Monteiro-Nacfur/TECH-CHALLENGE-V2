@@ -69,6 +69,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>org.hospital.schedule_api.ScheduleApiApplication</mainClass>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
