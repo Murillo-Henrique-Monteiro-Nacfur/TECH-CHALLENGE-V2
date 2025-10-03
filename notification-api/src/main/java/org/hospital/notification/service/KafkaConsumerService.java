@@ -8,11 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class KafkaConsumerService {
+
+    private final EmailService emailService;
 
     @KafkaListener(topics = "${kafka.topic.name}", groupId = "${kafka.group.id}")
     public void consumeNotification(NotificationRequest request) {
         log.info("Consumed message from Kafka");
         log.info("Received Notification: {}", request);
+        emailService.sendEmail(request);
     }
 }

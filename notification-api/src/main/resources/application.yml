@@ -1,35 +1,73 @@
 server:
   port: ${SERVER_PORT:8084}
-
-spring:
-  application:
-    name: notification-api
-
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
-  kafka:
-    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    consumer:
-      group-id: ${kafka.group.id}
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "*"
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  shutdown: graceful
 
 kafka:
   topic:
-    name: "notification-topic"
+    name: ${KAFKA_TOPIC_NAME:notification-topic}
   group:
-    id: "notification-group"
+    id: ${KAFKA_GROUP_ID:notification-service-group}
 
-jwt:
-  secret: "a-string-secret-at-least-256-bits-long"
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: notification-api
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
+  datasource:
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/fase3}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:7KTu)$U9W1%7}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        default_schema: hospital
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: notificationRequest:org.hospital.notification.dto.request.NotificationRequest
+        spring.json.add.type.headers: false
+    consumer:
+      group-id: notification-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.type.mapping: notificationRequest:org.hospital.notification.dto.request.NotificationRequest
+        spring.json.trusted.packages: "org.hospital.notification.dto.request"
+        spring.json.value.default.type: "org.hospital.notification.dto.request.NotificationRequest"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,shutdown
+  endpoint:
+    shutdown:
+      enabled: true
 
 logging:
   level:

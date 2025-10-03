@@ -15,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @RequiredArgsConstructor
+
 public class SecurityConfig {
     private final SecurityConfigValues securityConfigValues;
 
@@ -23,7 +24,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity, not recommended for production
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/actuator/**").permitAll() // Allow public access to login endpoints)
-                .anyRequest().authenticated())
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(conf -> conf.jwt(Customizer.withDefaults())); // Require authentication for all other requests
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); // Allow frames from the same origin, useful for H2 console

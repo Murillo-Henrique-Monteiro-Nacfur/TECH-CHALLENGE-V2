@@ -6,7 +6,7 @@ spring:
       enabled: true
   datasource:
     url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/fase3}
-    username: ${DATASOURCE_USERNAME:application}
+    username: ${DATASOURCE_USERNAME:postgres}
     password: ${DATASOURCE_PASSWORD:7KTu)$U9W1%7}
     driver-class-name: org.postgresql.Driver
   jpa:
@@ -25,8 +25,23 @@ spring:
     enabled: true
     default-schema: hospital
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        spring.json.add.type.headers: false
+
 grpc:
   server:
     port: 6566
     security: # Re-abilitando a segurança para o servidor gRPC
       enabled: false
+
+kafka:
+  topic:
+    notification: ${KAFKA_NOTIFICATION_TOPIC:appointment-scheduling-topic}
