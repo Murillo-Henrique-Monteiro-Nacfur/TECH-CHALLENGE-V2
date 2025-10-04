@@ -1,4 +1,4 @@
-package org.hospital.schedular_api;
+package org.hospital.schedule_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
