@@ -2,9 +2,10 @@ spring:
   application:
     name: schedule-api
   datasource:
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5432/hospital}
-    username: ${DATASOURCE_USERNAME:application}
-    password: ${DATASOURCE_PASSWORD:Xp8n9W3dLz6vQ1sE}
+    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/fase3}
+    username: ${DATASOURCE_USERNAME:postgres}
+    password: ${DATASOURCE_PASSWORD:7KTu)$U9W1%7}
+    driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
@@ -24,6 +25,17 @@ spring:
     bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     enabled: true
     default-schema: hospital
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 3
+      properties:
+        enable.idempotence: true
+        spring.json.add.type.headers: false
 
 grpc:
   server:
