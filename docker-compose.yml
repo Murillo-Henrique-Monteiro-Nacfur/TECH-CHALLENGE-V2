@@ -116,9 +116,12 @@ services:
       dockerfile: Dockerfile.gateway
     container_name: gateway
     ports:
-      - "8080:8080"
+      - "8089:8089"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - GRPC_AUTHENTICATION_API_URL=${GRPC_AUTHENTICATION_API}
+      - GRPC_SCHEDULE_API_URL=${GRPC_SCHEDULE_API}
+      - GRPC_HISTORICAL_API_URL=${GRPC_HISTORICAL_API}
     depends_on:
       - authentication-api
       - schedule-api

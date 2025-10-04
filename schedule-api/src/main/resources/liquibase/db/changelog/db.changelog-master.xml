@@ -70,10 +70,10 @@
             -- Inserindo um usuário para cada role
             -- A senha 'password123' é um placeholder. Em um ambiente real, ela deve ser devidamente "hasheada".
             INSERT INTO hospital."USERS" ("NAME", "EMAIL", "LOGIN", "PASSWORD", "BIRTH_DATE") VALUES
-            ('Admin User', 'admin@example.com', 'admin.user', 'password123', '1980-01-01'),
-            ('Doctor User', 'doctor@example.com', 'doctor.user', 'password123', '1985-05-10'),
-            ('Nurse User', 'nurse@example.com', 'nurse.user', 'password123', '1990-03-15'),
-            ('Patient User', 'patient@example.com', 'patient.user', 'password123', '1995-11-30');
+            ('Admin User', 'admin@example.com', 'admin.user', '$2a$10$otmLefMKoCdY4a31ATkup.uco7fhgYtO3ioHbLlh6e002QTAz3A7S', '1980-01-01'),
+            ('Doctor User', 'doctor@example.com', 'doctor.user', '$2a$10$otmLefMKoCdY4a31ATkup.uco7fhgYtO3ioHbLlh6e002QTAz3A7S', '1985-05-10'),
+            ('Nurse User', 'nurse@example.com', 'nurse.user', '$2a$10$otmLefMKoCdY4a31ATkup.uco7fhgYtO3ioHbLlh6e002QTAz3A7S', '1990-03-15'),
+            ('Patient User', 'patient@example.com', 'patient.user', '$2a$10$otmLefMKoCdY4a31ATkup.uco7fhgYtO3ioHbLlh6e002QTAz3A7S', '1995-11-30');
         </sql>
         <rollback>
             -- O rollback precisa primeiro remover as roles para depois remover os usuários devido à chave estrangeira

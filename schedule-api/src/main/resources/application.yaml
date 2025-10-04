@@ -10,7 +10,12 @@ spring:
     show-sql: true
     properties:
       hibernate:
+        globally_quoted_identifiers: true
         default_schema: hospital
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
   liquibase:
     change-log: classpath:liquibase/db/changelog/db.changelog-master.xml
     default-schema: hospital
@@ -23,5 +28,5 @@ spring:
 grpc:
   server:
     port: 6566
-    security: # Re-abilitando a segurança para o servidor gRPC
+    security:
       enabled: false

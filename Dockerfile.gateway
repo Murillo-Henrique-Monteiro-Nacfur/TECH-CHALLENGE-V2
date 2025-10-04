@@ -21,6 +21,6 @@ WORKDIR /app
 
 COPY --from=build /app/gateway/target/gateway-1.0-SNAPSHOT.jar app.jar
 
-EXPOSE 8080
+EXPOSE 8089
 
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-Dlog4j2.formatMsgNoLookups=true", "-XX:MinRAMPercentage=60", "-XX:MaxRAMPercentage=90", "-server", "-XX:+OptimizeStringConcat", "-XX:+UseStringDeduplication", "-jar", "app.jar"]
