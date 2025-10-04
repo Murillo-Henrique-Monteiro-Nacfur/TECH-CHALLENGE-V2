@@ -5,56 +5,28 @@ services:
   # Dependência: Banco de Dados PostgreSQL
   #-------------------------------------------------
   postgres-db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     container_name: postgres-db
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U application -d hospital"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
     networks:
       - hospital-network
 
   #-------------------------------------------------
-  # Dependência: Apache Kafka e Zookeeper
-  #-------------------------------------------------
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - hospital-network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.0.1
-    container_name: kafka
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    networks:
-      - hospital-network
-
-  #-------------------------------------------------
-  # Serviço: Autenticação
+  # API de Autenticação
   #-------------------------------------------------
   authentication-api:
     build:
@@ -104,15 +76,17 @@ services:
       dockerfile: Dockerfile.schedule-api
     container_name: schedule-api
     ports:
-      - "8081:8080"
-      - "6566:6566" # Porta gRPC
-    environment:
-      - DATASOURCE_URL=${DB_URL}
-      - DATASOURCE_USERNAME=${DB_USER}
-      - DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - "8082:8082"
     depends_on:
       postgres-db:
         condition: service_healthy
+      kafka:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DATASOURCE_URL=${DB_URL}
+      - DATASOURCE_USERNAME=${DB_USER}
+      - DATASOURCE_PASSWORD=${DB_PASSWORD}
     networks:
       - hospital-network
 
@@ -125,7 +99,7 @@ services:
       dockerfile: Dockerfile.notification-api
     container_name: notification-api
     ports:
-      - "8082:8080"
+      - "8084:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -149,6 +123,36 @@ services:
       - authentication-api
       - schedule-api
       - historical
+    networks:
+      - hospital-network
+
+  #-------------------------------------------------
+  # Dependência: Apache Kafka e Zookeeper
+  #-------------------------------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - hospital-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     networks:
       - hospital-network
 
