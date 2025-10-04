@@ -78,20 +78,20 @@ public class AppointmentsServiceGrpc {
                 .setAppointmentFilterRequest(builder.build())
                 .build();
 
-        AppointmentPagedResponse appointmentCreateResponse;
+        AppointmentPagedResponse appointmentPagedResponse;
         try {
-            appointmentCreateResponse = appointmentServiceBlockingStub.getAppointmentsByFilter(request);
+            appointmentPagedResponse = appointmentServiceBlockingStub.getAppointmentsByFilter(request);
         } catch (Exception e) {
             log.error("Error calling gRPC service: {}", e.getMessage());
             throw new ApplicationException("Failed to findAllAppointments");
         }
 
         return AppointmentPagedResponseDTO.builder()
-                .page(appointmentCreateResponse.getPage())
-                .totalPages(appointmentCreateResponse.getTotalPages())
-                .totalElements(appointmentCreateResponse.getTotalElements())
-                .size(appointmentCreateResponse.getAppointmentsList().size())
-                .appointments(appointmentCreateResponse.getAppointmentsList().stream().map(appointment ->
+                .page(appointmentPagedResponse.getPage())
+                .totalPages(appointmentPagedResponse.getTotalPages())
+                .totalElements(appointmentPagedResponse.getTotalElements())
+                .size(appointmentPagedResponse.getAppointmentsList().size())
+                .appointments(appointmentPagedResponse.getAppointmentsList().stream().map(appointment ->
                         AppointmentResponseDTO.builder()
                                 .id(appointment.getId())
                                 .doctorUserId(appointment.getDoctorUserId())

@@ -24,14 +24,14 @@ spring:
 grpc:
   client:
     login-service:
-      address: 'static://localhost:6565'
+      address: ${GRPC_AUTHENTICATION_API_URL:static://localhost:6565}
       negotiation-type: PLAINTEXT
     user-service:
-      address: 'static://localhost:6565'
+      address: ${GRPC_AUTHENTICATION_API_URL:static://localhost:6565}
       negotiation-type: PLAINTEXT
     schedule-service:
-      address: 'static://localhost:6566'
+      address: ${GRPC_SCHEDULE_API_URL:static://localhost:6566}
       negotiation-type: PLAINTEXT
     history-service:
-      address: 'static://localhost:6567'
+      address: ${GRPC_HISTORICAL_API_URL:static://historical:6567}
       negotiation-type: PLAINTEXT
