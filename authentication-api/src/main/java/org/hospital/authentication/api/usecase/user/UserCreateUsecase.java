@@ -7,6 +7,7 @@ import org.hospital.authentication.api.validator.user.UserCreateValidator;
 import org.hospital.core.domain.entity.User;
 import org.hospital.core.domain.service.UserServiceCore;
 import org.hospital.core.infrastructure.database.entitydb.UserEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ public class UserCreateUsecase {
     private final UserServiceCore userServiceCore;
     private final UserPresenters userPresenters;
     private final List<UserCreateValidator> validators;
+    private final PasswordEncoder passwordEncoder;
 
     public User execute(User user) {
         validate(user);
         UserEntity userEntity = userPresenters.toEntity(user);
+        userEntity.setPassword(passwordEncoder.encode(userEntity.getPassword()));
         return userServiceCore.create(userEntity);
     }
 

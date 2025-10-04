@@ -1,6 +1,5 @@
 
 enum Role {
-    ADMIN
     DOCTOR
     NURSE
     PATIENT
@@ -26,11 +25,18 @@ input Pageable {
     page: Int
     size: Int
 }
-
+input CreateUserRequest {
+    name: String!
+    email: String!
+    login: String!
+    password: String!
+    birthDate: LocalDateTime!
+    role: Role!
+}
 type LoginResponse {
     token: String!
 }
 extend type Mutation {
     login(username: String!, password: String!): LoginResponse!
-    createUser(username: String!, email: String!, userType: Role!): CreateUserResponse!
+    createUser(input: CreateUserRequest): CreateUserResponse!
 }

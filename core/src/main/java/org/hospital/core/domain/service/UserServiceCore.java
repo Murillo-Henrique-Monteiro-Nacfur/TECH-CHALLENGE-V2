@@ -47,6 +47,7 @@ public class UserServiceCore {
     }
 
     public User create(UserEntity user) {
+        user.getRoles().forEach(userRole -> userRole.setUserEntity(user));
         var userEntity = userRepository.save(user);
         return userMapper.toDomain(userEntity);
     }

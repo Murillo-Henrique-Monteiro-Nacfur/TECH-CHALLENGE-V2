@@ -21,6 +21,7 @@ public class UserRoleEntity {
     @Enumerated(EnumType.STRING)
     private UserRoles role;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID", nullable = false)
     private UserEntity userEntity;

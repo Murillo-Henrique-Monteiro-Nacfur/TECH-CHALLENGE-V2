@@ -11,12 +11,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 @GrpcGlobalServerInterceptor
 public class GrpcServerAuthInterceptor implements ServerInterceptor {
 
-    public static final String MAKE_LOGIN_METHOD = "MakeLogin";
+    public static final List<String> ignoredMethods = List.of("MakeLogin", "CreateUser");
     private final JwtDecoreServiceCore jwtDecoreServiceCore;
     private static final Logger log = LoggerFactory.getLogger(GrpcServerAuthInterceptor.class);
 
@@ -27,7 +29,7 @@ public class GrpcServerAuthInterceptor implements ServerInterceptor {
     public <ReqT, RespT> ServerCall.Listener<ReqT> interceptCall(
             ServerCall<ReqT, RespT> call, Metadata headers, ServerCallHandler<ReqT, RespT> next) {
 
-        if(MAKE_LOGIN_METHOD.equals(call.getMethodDescriptor().getBareMethodName())){
+        if(ignoredMethods.contains(call.getMethodDescriptor().getBareMethodName())){
             return next.startCall(call, headers);
         }
 

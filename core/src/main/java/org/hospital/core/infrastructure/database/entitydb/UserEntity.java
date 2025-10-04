@@ -39,7 +39,7 @@ public class UserEntity {
     @Column(name = "BIRTH_DATE")
     private LocalDate birthDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<UserRoleEntity> roles;
 
 }

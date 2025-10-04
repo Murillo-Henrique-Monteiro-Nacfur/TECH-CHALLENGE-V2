@@ -1,4 +1,4 @@
-package org.hospital.gateway.api.dto;
+package org.hospital.gateway.api.dto.user;
 
 
 import lombok.Builder;
