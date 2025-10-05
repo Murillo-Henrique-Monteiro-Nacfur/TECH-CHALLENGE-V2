@@ -7,6 +7,7 @@ import org.hospital.core.infrastructure.database.repository.AppointmentsReposito
 import org.hospital.core.infrastructure.exception.ApplicationException;
 import org.hospital.schedule_api.domain.presenter.AppointmentPresenter;
 import org.hospital.schedule_api.domain.validator.appointment.create.AppointmentValidatorCreateInterface;
+import org.hospital.schedule_api.domain.validator.appointment.update.AppointmentValidatorUpdateInterface;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import static java.util.Optional.ofNullable;
 public class AppointmentUpdateUseCase {
     public final AppointmentsRepository appointmentsRepository;
     public final AppointmentPresenter appointmentPresenter;
-    public final List<AppointmentValidatorCreateInterface> validators;
+    public final List<AppointmentValidatorUpdateInterface> validators;
 
     public Appointments execute(Appointments appointments) {
         AppointmentsEntity appointmentsEntity = appointmentsRepository.findById(appointments.getId()).orElseThrow(() -> new ApplicationException("Appointment not found"));

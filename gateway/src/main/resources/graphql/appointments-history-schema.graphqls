@@ -1,5 +1,6 @@
 type AppointmentHistoryResponseDTO {
     id: ID
+    idAppointment: ID
     doctorName: String
     patientName: String
     dateHourStart: LocalDateTime

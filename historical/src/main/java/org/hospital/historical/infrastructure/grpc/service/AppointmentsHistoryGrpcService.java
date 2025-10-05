@@ -1,4 +1,4 @@
-package org.hospital.historical.domain.service;
+package org.hospital.historical.infrastructure.grpc.service;
 
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -8,6 +8,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import org.hospital.appointmenthistory.AppointmentHistoryPagedRequest;
 import org.hospital.appointmenthistory.AppointmentHistoryPagedResponse;
 import org.hospital.appointmenthistory.AppointmentHistoryServiceGrpc;
+import org.hospital.core.infrastructure.exception.ApplicationException;
 import org.hospital.historical.domain.presenter.AppointmentHistoryPresenter;
 import org.hospital.historical.domain.usecase.AppointmentHistoryUseCase;
 import org.springframework.data.domain.PageRequest;
@@ -16,10 +17,11 @@ import org.springframework.data.domain.Pageable;
 @Slf4j
 @GrpcService
 @RequiredArgsConstructor
-public class AppointmentsHistoryService extends AppointmentHistoryServiceGrpc.AppointmentHistoryServiceImplBase {
+public class AppointmentsHistoryGrpcService extends AppointmentHistoryServiceGrpc.AppointmentHistoryServiceImplBase {
 
+    private static final String ERROR_SEARCHING_HISTORY_OF_APPOINTMENTS = "Error searching history of appointments";
     private final AppointmentHistoryUseCase appointmentHistoryUseCase;
-    public final AppointmentHistoryPresenter appointmentHistoryPresenter;
+    private final AppointmentHistoryPresenter appointmentHistoryPresenter;
 
     @Override
     public void getAppointmentsHistoryByFilter(AppointmentHistoryPagedRequest request, StreamObserver<AppointmentHistoryPagedResponse> responseObserver) {
@@ -33,9 +35,12 @@ public class AppointmentsHistoryService extends AppointmentHistoryServiceGrpc.Ap
                     .addAllAppointmentHistory(appointmentsHistories.map(appointmentHistoryPresenter::toAppointmentHistoryProto).toList());
             responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
+        } catch (ApplicationException e) {
+            log.error(ERROR_SEARCHING_HISTORY_OF_APPOINTMENTS, e);
+            responseObserver.onError(Status.INTERNAL.withDescription(e.getMessage()).asRuntimeException());
         } catch (Exception e) {
-            log.error("Error creating appointment", e);
-            responseObserver.onError(Status.INTERNAL.withDescription("Internal server error").asRuntimeException());
+            log.error(ERROR_SEARCHING_HISTORY_OF_APPOINTMENTS, e);
+            responseObserver.onError(Status.INTERNAL.withDescription(ERROR_SEARCHING_HISTORY_OF_APPOINTMENTS).asRuntimeException());
         }
     }
 }

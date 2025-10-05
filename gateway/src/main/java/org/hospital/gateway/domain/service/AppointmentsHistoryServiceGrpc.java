@@ -38,12 +38,9 @@ public class AppointmentsHistoryServiceGrpc {
                 .build();
 
         AppointmentHistoryPagedResponse appointmentHistoryPagedResponse;
-        try {
+
             appointmentHistoryPagedResponse = appointmentHistoryServiceBlockingStub.getAppointmentsHistoryByFilter(request);
-        } catch (Exception e) {
-            log.error("Error calling gRPC service: {}", e.getMessage());
-            throw new ApplicationException("Failed to search appointment historic");
-        }
+
         return AppointmentHistoryPagedResponseDTO.builder()
                 .page(appointmentHistoryPagedResponse.getPage())
                 .totalPages(appointmentHistoryPagedResponse.getTotalPages())
@@ -52,6 +49,7 @@ public class AppointmentsHistoryServiceGrpc {
                 .appointments(appointmentHistoryPagedResponse.getAppointmentHistoryList().stream().map(appointment ->
                         AppointmentHistoryResponseDTO.builder()
                                 .id(appointment.getId())
+                                .idAppointment(appointment.getIdAppointment())
                                 .doctorName(appointment.getDoctorName())
                                 .patientName(appointment.getPatientName())
                                 .dateHourStart(appointment.hasDateHourStart() ? LocalDateTime.ofInstant(Instant.ofEpochSecond(appointment.getDateHourStart().getSeconds(), appointment.getDateHourStart().getNanos()), ZoneOffset.UTC) : null)

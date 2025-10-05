@@ -4,7 +4,6 @@ import com.google.protobuf.UInt64Value;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.hospital.appointment.*;
-import org.hospital.core.infrastructure.exception.ApplicationException;
 import org.hospital.gateway.api.dto.appointment.*;
 import org.hospital.gateway.api.dto.common.PageableDTO;
 import org.springframework.stereotype.Service;
@@ -37,12 +36,9 @@ public class AppointmentsServiceGrpc {
         ofNullable(appointmentCreateRequestDTO.getDateHourEnd()).map(this::convertLocalDateTimeToGoogleTimestamp).ifPresent(request::setDateHourEnd);
 
         AppointmentCreateUpdateResponse appointmentCreateResponse;
-        try {
-            appointmentCreateResponse = appointmentServiceBlockingStub.createAppointment(request.build());
-        } catch (Exception e) {
-            log.error("Error calling gRPC service: {}", e.getMessage());
-            throw new ApplicationException("Failed to create appointment");
-        }
+
+        appointmentCreateResponse = appointmentServiceBlockingStub.createAppointment(request.build());
+
         return AppointmentCreateUpdateResponseDTO.builder().appointmentId(appointmentCreateResponse.getId()).message("Sucesso").success(true).build();
     }
 
@@ -79,12 +75,8 @@ public class AppointmentsServiceGrpc {
                 .build();
 
         AppointmentPagedResponse appointmentPagedResponse;
-        try {
-            appointmentPagedResponse = appointmentServiceBlockingStub.getAppointmentsByFilter(request);
-        } catch (Exception e) {
-            log.error("Error calling gRPC service: {}", e.getMessage());
-            throw new ApplicationException("Failed to findAllAppointments");
-        }
+
+        appointmentPagedResponse = appointmentServiceBlockingStub.getAppointmentsByFilter(request);
 
         return AppointmentPagedResponseDTO.builder()
                 .page(appointmentPagedResponse.getPage())
@@ -118,12 +110,9 @@ public class AppointmentsServiceGrpc {
         ofNullable(appointmentUpdateRequestDTO.getDescription()).ifPresent(builder::setDescription);
 
         AppointmentCreateUpdateResponse appointmentUpdateResponse;
-        try {
-            appointmentUpdateResponse = appointmentServiceBlockingStub.updateAppointment(builder.build());
-        } catch (Exception e) {
-            log.error("Error calling gRPC service: {}", e.getMessage());
-            throw new ApplicationException("Failed to findAllAppointments");
-        }
+
+        appointmentUpdateResponse = appointmentServiceBlockingStub.updateAppointment(builder.build());
+
         return AppointmentCreateUpdateResponseDTO.builder().appointmentId(appointmentUpdateResponse.getId()).message("Sucesso").success(true).build();
     }
 }

@@ -33,5 +33,5 @@ grpc:
       address: ${GRPC_SCHEDULE_API_URL:static://localhost:6566}
       negotiation-type: PLAINTEXT
     history-service:
-      address: ${GRPC_HISTORICAL_API_URL:static://historical:6567}
+      address: ${GRPC_HISTORICAL_API_URL:static://localhost:6567}
       negotiation-type: PLAINTEXT

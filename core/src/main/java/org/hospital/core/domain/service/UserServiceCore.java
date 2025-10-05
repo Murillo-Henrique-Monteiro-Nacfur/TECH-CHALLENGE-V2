@@ -5,6 +5,7 @@ import org.hospital.core.domain.entity.User;
 import org.hospital.core.infrastructure.database.UserMapper;
 import org.hospital.core.infrastructure.database.entitydb.UserEntity;
 import org.hospital.core.infrastructure.database.repository.UserRepository;
+import org.hospital.core.infrastructure.exception.ApplicationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class UserServiceCore {
 
     @Transactional(readOnly = true)
     public User getUserByIdOrFail(Long id) {
-        return getUserById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return getUserById(id).orElseThrow(() -> new ApplicationException("User not found"));
     }
 
     @Transactional(readOnly = true)
@@ -30,7 +31,7 @@ public class UserServiceCore {
 
     @Transactional(readOnly = true)
     public User getUserByLoginOrFail(String login) {
-        var userEntity = userRepository.findByLogin(login).orElseThrow(() -> new RuntimeException("User not found"));
+        var userEntity = userRepository.findByLogin(login).orElseThrow(() -> new ApplicationException("User not found"));
         return userMapper.toDomain(userEntity);
     }
 

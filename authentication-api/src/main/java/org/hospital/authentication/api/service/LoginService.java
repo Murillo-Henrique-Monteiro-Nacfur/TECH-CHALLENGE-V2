@@ -1,24 +1,20 @@
 package org.hospital.authentication.api.service;
 
-import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
-import net.devh.boot.grpc.server.service.GrpcService;
-import org.hospital.authentication.api.service.handler.LoginServiceHandler;
 import org.hospital.login.LoginResponse;
-import org.hospital.login.LoginResquest;
-import org.hospital.login.LoginServiceGrpc;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
-@GrpcService
+@Service
 @RequiredArgsConstructor
-public class LoginService extends LoginServiceGrpc.LoginServiceImplBase {
+public class LoginService {
 
-    private final LoginServiceHandler loginServiceHandler;
+    private final AuthenticationService authenticationService;
 
-    @Override
-    public void makeLogin(LoginResquest request, StreamObserver<LoginResponse> responseObserver){
-        var response = loginServiceHandler.makeLogin(request.getName(), request.getPassword());
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+    public LoginResponse makeLogin(String name, String password) {
+        var authenticationToken = new UsernamePasswordAuthenticationToken(name, password);
+        var token = authenticationService.authenticate(authenticationToken);
+        return LoginResponse.newBuilder().setToken(token).build();
     }
+
 }

@@ -23,25 +23,7 @@ public class UserServiceGrpc {
     @GrpcClient("user-service")
     private org.hospital.user.UserServiceGrpc.UserServiceBlockingStub userServiceBlockingStub;
 
-    public UserResponseDTO findUserById(Long userId) {
-        try {
-            UserByIdRequest request = UserByIdRequest.newBuilder()
-                    .setUserId(userId)
-                    .build();
-            UserProto userProto = userServiceBlockingStub.getUserById(request);
-            return UserResponseDTO.builder().id(userProto.getId()).email(userProto.getEmail()).name(userProto.getName()).build();
-        } catch (StatusRuntimeException e) {
-            if (e.getStatus().getCode() == Status.Code.NOT_FOUND) {
-                log.warn("User not found via gRPC for ID: {}", userId);
-                return null;
-            }
-            log.error("gRPC error while finding user by ID: {}", userId, e);
-            throw new ApplicationException("Error fetching user data", HttpStatus.BAD_REQUEST);
-        }
-    }
-
     public UserCreatedResponseDTO createUser(UserCreateRequestDTO userCreateRequestDTO) {
-        try {
             UserCreateRequest request = UserCreateRequest.newBuilder()
                     .setName(userCreateRequestDTO.getName())
                     .setEmail(userCreateRequestDTO.getEmail())
@@ -52,10 +34,5 @@ public class UserServiceGrpc {
                     .build();
             UserCreatedResponse userCreatedResponse = userServiceBlockingStub.createUser(request);
             return UserCreatedResponseDTO.builder().userId(userCreatedResponse.getId()).message("Sucesso").success(true).build();
-
-        } catch (StatusRuntimeException e) {
-            log.error("Error Creating user: {}", userCreateRequestDTO.getName(), e);
-            throw new ApplicationException("Error Creating user", HttpStatus.BAD_REQUEST);
-        }
     }
 }
