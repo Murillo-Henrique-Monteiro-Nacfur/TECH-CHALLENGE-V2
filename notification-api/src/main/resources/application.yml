@@ -2,12 +2,6 @@ server:
   port: ${SERVER_PORT:8084}
   shutdown: graceful
 
-kafka:
-  topic:
-    name: ${KAFKA_TOPIC_NAME:notification-topic}
-  group:
-    id: ${KAFKA_GROUP_ID:notification-service-group}
-
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -16,21 +10,19 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 30s
 
-  datasource:
-    url: ${DATASOURCE_URL:jdbc:postgresql://localhost:5433/fase3}
-    username: ${DATASOURCE_USERNAME:postgres}
-    password: ${DATASOURCE_PASSWORD:7KTu)$U9W1%7}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-    properties:
-      hibernate:
-        globally_quoted_identifiers: true
-        default_schema: hospital
-    hibernate:
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.hospital.notification.dto.*"
+        spring.json.value.default.type: "org.hospital.notification.dto.request.NotificationRequest"
 
   mail:
     host: smtp.gmail.com
@@ -38,27 +30,8 @@ spring:
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-  kafka:
-    bootstrap-servers: localhost:9092
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.type.mapping: notificationRequest:org.hospital.notification.dto.request.NotificationRequest
-        spring.json.add.type.headers: false
-    consumer:
-      group-id: notification-service-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.type.mapping: notificationRequest:org.hospital.notification.dto.request.NotificationRequest
-        spring.json.trusted.packages: "org.hospital.notification.dto.request"
-        spring.json.value.default.type: "org.hospital.notification.dto.request.NotificationRequest"
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
 management:
   endpoints:
@@ -72,6 +45,7 @@ management:
 logging:
   level:
     org.hospital.notification: DEBUG
+    org.springframework.kafka: DEBUG
     reactor.kafka: DEBUG
 
 ---
@@ -82,3 +56,18 @@ spring:
 
   kafka:
     bootstrap-servers: kafka:29092
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+
+kafka:
+  topic:
+    name: "notification-topic"
+  group:
+    id: "notification-group"
+
+logging:
+  level:
+    org.hospital.notification: INFO
+    org.springframework.kafka: INFO
