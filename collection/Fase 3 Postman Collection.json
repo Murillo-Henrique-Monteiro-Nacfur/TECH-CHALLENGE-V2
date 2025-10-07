@@ -1,0 +1,210 @@
+{
+  "info": {
+    "name": "Fase 3 Collection",
+    "description": "",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "login",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation MyMutation {\n    login(username: \"nurse.user\", password: \"password123\") {\n        token\n    }\n}"
+          }
+        }
+      }
+    },
+    {
+      "name": "createAppointment",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJhdXRoZW50aWNhdGlvbi1hcGkiLCJzdWIiOiJOdXJzZSBVc2VyIiwic2NvcGVzIjoiUk9MRV9OVVJTRSIsImV4cCI6MTc1OTg3OTE1OCwiaWF0IjoxNzU5ODc1NTU4LCJ1c2VySWQiOjN9.WQclKCgO_1l1hSuyBLZB7I0YEuLrBFpD846g0I-B_I-ySbZ5R20m5YD5kmzvVoLLyQ2cvZ8WiruqNf-D57z8XQ9IK3l8mIsyi3C9HD8spBlj7ULS8DAr3fFZPCSaEWNOIUr-Iw6qCd5Nu1Yrf3UIZeJC3Yr2RjR6TjCxQY7Cu33162jZ_-QcLB2oadC8KNvydYWRdaYRSndNtXbhCzPwlNQUpq5YHRxd5pN8PdszgCp2PWl0uHfsok1MXMwjl55kk1xlvc9WCMnRGULbb-xoFnLJPUPr5eZwi5Svs4ueR26ruH9eNy2-NWrZGOhwvnlFOLiNJMOV7-NvgMIPIIfwDQ",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation CreateAppointment {\n    createAppointment(\n        input: {\n            doctorUserId: \"2\"\n            patientUserId: \"6\"\n            dateHourScheduled: \"2025-09-28T19:30:00\"\n            information: \"teste2222\"\n        }\n    ) {\n        appointmentId\n        success\n        message\n    }\n}\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "updateAppointment",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJhdXRoZW50aWNhdGlvbi1hcGkiLCJzdWIiOiJOdXJzZSBVc2VyIiwic2NvcGVzIjoiUk9MRV9OVVJTRSIsImV4cCI6MTc1OTg3OTE1OCwiaWF0IjoxNzU5ODc1NTU4LCJ1c2VySWQiOjN9.WQclKCgO_1l1hSuyBLZB7I0YEuLrBFpD846g0I-B_I-ySbZ5R20m5YD5kmzvVoLLyQ2cvZ8WiruqNf-D57z8XQ9IK3l8mIsyi3C9HD8spBlj7ULS8DAr3fFZPCSaEWNOIUr-Iw6qCd5Nu1Yrf3UIZeJC3Yr2RjR6TjCxQY7Cu33162jZ_-QcLB2oadC8KNvydYWRdaYRSndNtXbhCzPwlNQUpq5YHRxd5pN8PdszgCp2PWl0uHfsok1MXMwjl55kk1xlvc9WCMnRGULbb-xoFnLJPUPr5eZwi5Svs4ueR26ruH9eNy2-NWrZGOhwvnlFOLiNJMOV7-NvgMIPIIfwDQ",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation CreateAppointment {\n    updateAppointment(\n        input: {\n            id: \"3\"\n            dateHourScheduled: \"2025-09-28T18:36\"\n            status: COMPLETED\n            information: \"teste\"\n        }\n    ) {\n        appointmentId\n        success\n        message\n    }\n}\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "createUser",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "noauth"
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "mutation CreateUser {\n    createUser(\n        input: {\n            email: \"valid.email@gmail.com\"\n            login: \"loginusuario\"\n            password: \"teste123\"\n            birthDate: \"2025-09-28T19:30:00\"\n            role: PATIENT\n            name: \"usaurioTeste\"\n        }\n    ) {\n        message\n        userId\n        success\n    }\n}\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "findAppointments",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJhdXRoZW50aWNhdGlvbi1hcGkiLCJzdWIiOiJOdXJzZSBVc2VyIiwic2NvcGVzIjoiUk9MRV9OVVJTRSIsImV4cCI6MTc1OTg4MjQ2OSwiaWF0IjoxNzU5ODc4ODY5LCJ1c2VySWQiOjN9.Tj32fdtaaDWW9OxQxzmjbLRno2BeSYchBotYn0sFaX4DeFykxFitfPp37HtUdHSeuYKs8XbptzwYqtk7dIhaoY12czWiI3ckYcSlEa7cx3HpzZ7ZCWUzX463ruJaIGw_Tw3qkP-N2rC1BwAhPvhptF20t6qbYRxbIeAIFG4BAEYetxRO83YUnWDrHrLxqnVLQS3lVi2MDECw-_vjqpzgKKSJLRGSJS1aM8sFft8xGFwNis979iDGk6wowwTj-98p1ju_i6X_w6RADNJCp7v6ZjpKi9MbILCM7uRyNQR2HFUaGndpc80ej8oHiXlvRzC0D0GJe1u76Hd5m6BotisN4w",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query FindAllAppointments {\n    findAllAppointments(input: { upcoming: false }, pageable: null) {\n        appointments {\n            id\n            description\n            doctorUserId\n            patientUserId\n            information\n          dateHourEnd\n          dateHourStart\n          dateHourScheduled\n          status\n        }\n        page\n    }\n}\n\n"
+          }
+        }
+      }
+    },
+    {
+      "name": "appointmentHistory",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "auth": {
+          "type": "bearer",
+          "bearer": {
+            "key": "token",
+            "value": "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJhdXRoZW50aWNhdGlvbi1hcGkiLCJzdWIiOiJOdXJzZSBVc2VyIiwic2NvcGVzIjoiUk9MRV9OVVJTRSIsImV4cCI6MTc1OTg4MjQ2OSwiaWF0IjoxNzU5ODc4ODY5LCJ1c2VySWQiOjN9.Tj32fdtaaDWW9OxQxzmjbLRno2BeSYchBotYn0sFaX4DeFykxFitfPp37HtUdHSeuYKs8XbptzwYqtk7dIhaoY12czWiI3ckYcSlEa7cx3HpzZ7ZCWUzX463ruJaIGw_Tw3qkP-N2rC1BwAhPvhptF20t6qbYRxbIeAIFG4BAEYetxRO83YUnWDrHrLxqnVLQS3lVi2MDECw-_vjqpzgKKSJLRGSJS1aM8sFft8xGFwNis979iDGk6wowwTj-98p1ju_i6X_w6RADNJCp7v6ZjpKi9MbILCM7uRyNQR2HFUaGndpc80ej8oHiXlvRzC0D0GJe1u76Hd5m6BotisN4w",
+            "type": "string"
+          }
+        },
+        "description": "",
+        "url": {
+          "raw": "http://localhost:8089/graphql",
+          "protocol": "http",
+          "host": [
+            "localhost:8089"
+          ],
+          "path": [
+            "graphql"
+          ],
+          "query": [],
+          "variable": []
+        },
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query FindAllAppointmentsHistory {\n    findAllAppointmentsHistory {\n        appointments {\n            id\n            doctorName\n            patientName\n            dateHourStart\n            dateHourEnd\n            information\n            description\n            statusAppointment\n            idAppointment\n        }\n    }\n}\n"
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}
