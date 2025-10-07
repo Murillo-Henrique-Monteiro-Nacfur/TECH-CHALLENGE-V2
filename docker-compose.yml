@@ -1,9 +1,7 @@
 version: '3.8'
 
 services:
-  #-------------------------------------------------
-  # Dependência: Banco de Dados PostgreSQL
-  #-------------------------------------------------
+  # PostgreSQL
   postgres-db:
     image: postgres:15-alpine
     container_name: postgres-db
@@ -25,16 +23,14 @@ services:
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # API de Autenticação
-  #-------------------------------------------------
+  # Autenticação
   authentication-api:
     build:
       context: .
       dockerfile: Dockerfile.authentication-api
     container_name: authentication-api
     ports:
-      - "6565:6565" # Porta gRPC
+      - "6565:6565"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - DATASOURCE_URL=${DB_URL}
@@ -46,9 +42,7 @@ services:
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # Serviço: Histórico
-  #-------------------------------------------------
+  #Histórico
   historical:
     build:
       context: .
@@ -67,9 +61,8 @@ services:
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # Serviço: Agendamento
-  #-------------------------------------------------
+
+  #Agendamento
   schedule-api:
     build:
       context: .
@@ -90,9 +83,7 @@ services:
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # Serviço: Notificação (Reativo)
-  #-------------------------------------------------
+  # Notificação
   notification-api:
     build:
       context: .
@@ -102,14 +93,16 @@ services:
       - "8084:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
     depends_on:
       - kafka
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # Serviço: API Gateway (Ponto de Entrada)
-  #-------------------------------------------------
+  # Gateway
   gateway:
     build:
       context: .
@@ -129,9 +122,7 @@ services:
     networks:
       - hospital-network
 
-  #-------------------------------------------------
-  # Dependência: Apache Kafka e Zookeeper
-  #-------------------------------------------------
+  #Apache Kafka e Zookeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     container_name: zookeeper
@@ -159,9 +150,6 @@ services:
     networks:
       - hospital-network
 
-#-------------------------------------------------
-# Volumes e Redes Globais
-#-------------------------------------------------
 volumes:
   postgres-data:
 
